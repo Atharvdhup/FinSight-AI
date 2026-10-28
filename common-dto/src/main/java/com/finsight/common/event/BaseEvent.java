@@ -1,8 +1,6 @@
 package com.finsight.common.event;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
@@ -13,13 +11,19 @@ import java.io.Serializable;
  * @param <T> Payload domain type
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class BaseEvent<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private EventHeader header;
     private T data;
+
+    public BaseEvent() {
+    }
+
+    public BaseEvent(EventHeader header, T data) {
+        this.header = header;
+        this.data = data;
+    }
 
     public String getEventId() {
         return header != null ? header.getEventId() : null;
