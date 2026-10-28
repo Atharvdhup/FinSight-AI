@@ -30,3 +30,4 @@ public class StockQuoteDTO implements Serializable {
     private String currency;
     private Instant marketTime;
 }
+

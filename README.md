@@ -97,3 +97,4 @@ docker compose -f docker/docker-compose.dev.yml up -d
 ## 📚 Documentation
 - [Project Architecture & Specifications](file:///Users/atharvdhup/FinSightProject/project.md)
 - [21-Day Implementation Roadmap](file:///Users/atharvdhup/FinSightProject/roadmap.md)
+

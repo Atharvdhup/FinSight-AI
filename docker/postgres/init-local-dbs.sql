@@ -14,3 +14,4 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Connect to portfolio_db and install uuid-ossp
 \c portfolio_db;
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+

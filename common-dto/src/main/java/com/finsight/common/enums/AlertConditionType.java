@@ -6,3 +6,4 @@ public enum AlertConditionType {
     PCT_CHANGE_UP,
     PCT_CHANGE_DOWN
 }
+

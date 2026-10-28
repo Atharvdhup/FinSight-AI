@@ -133,3 +133,4 @@ volumes:
 networks:
   finsight-network:
     driver: bridge
+

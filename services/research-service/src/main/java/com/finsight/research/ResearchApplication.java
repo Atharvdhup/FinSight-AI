@@ -9,3 +9,4 @@ public class ResearchApplication {
         SpringApplication.run(ResearchApplication.class, args);
     }
 }
+
