@@ -23,3 +23,4 @@ public interface HoldingRepository extends JpaRepository<Holding, Long> {
     @Query("SELECT h FROM Holding h WHERE h.portfolio.id = :portfolioId AND h.quantity > 0 ORDER BY h.currentValue DESC")
     List<Holding> findActiveHoldingsByPortfolioId(@Param("portfolioId") Long portfolioId);
 }
+

@@ -20,3 +20,4 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     List<Transaction> findByPortfolioIdAndSymbolOrderByExecutedAtDesc(Long portfolioId, String symbol);
 }
+

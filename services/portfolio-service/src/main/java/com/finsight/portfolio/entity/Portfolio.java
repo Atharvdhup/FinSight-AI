@@ -174,3 +174,4 @@ public class Portfolio implements Serializable {
                 '}';
     }
 }
+

@@ -54,3 +54,4 @@ CREATE TABLE transactions (
 CREATE INDEX idx_transactions_portfolio ON transactions(portfolio_id);
 CREATE INDEX idx_transactions_symbol ON transactions(symbol);
 CREATE INDEX idx_transactions_executed_at ON transactions(portfolio_id, executed_at DESC);
+
