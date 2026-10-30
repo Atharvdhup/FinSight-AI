@@ -1,0 +1,75 @@
+[
+  {
+    "symbol": "AAPL",
+    "companyName": "Apple Inc.",
+    "sector": "Technology",
+    "industry": "Consumer Electronics",
+    "currency": "USD",
+    "baselinePrice": 182.50,
+    "averageVolume": 55000000
+  },
+  {
+    "symbol": "MSFT",
+    "companyName": "Microsoft Corporation",
+    "sector": "Technology",
+    "industry": "Software—Infrastructure",
+    "currency": "USD",
+    "baselinePrice": 425.00,
+    "averageVolume": 22000000
+  },
+  {
+    "symbol": "GOOGL",
+    "companyName": "Alphabet Inc.",
+    "sector": "Communication Services",
+    "industry": "Internet Content & Information",
+    "currency": "USD",
+    "baselinePrice": 168.00,
+    "averageVolume": 28000000
+  },
+  {
+    "symbol": "NVDA",
+    "companyName": "NVIDIA Corporation",
+    "sector": "Technology",
+    "industry": "Semiconductors",
+    "currency": "USD",
+    "baselinePrice": 124.50,
+    "averageVolume": 65000000
+  },
+  {
+    "symbol": "AMZN",
+    "companyName": "Amazon.com Inc.",
+    "sector": "Consumer Cyclical",
+    "industry": "Internet Retail",
+    "currency": "USD",
+    "baselinePrice": 186.20,
+    "averageVolume": 35000000
+  },
+  {
+    "symbol": "INFY",
+    "companyName": "Infosys Limited",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
+    "currency": "USD",
+    "baselinePrice": 22.80,
+    "averageVolume": 18000000
+  },
+  {
+    "symbol": "TCS",
+    "companyName": "Tata Consultancy Services Ltd.",
+    "sector": "Technology",
+    "industry": "Information Technology Services",
+    "currency": "INR",
+    "baselinePrice": 3520.00,
+    "averageVolume": 2500000
+  },
+  {
+    "symbol": "RELIANCE",
+    "companyName": "Reliance Industries Ltd.",
+    "sector": "Energy",
+    "industry": "Oil & Gas Refining & Marketing",
+    "currency": "INR",
+    "baselinePrice": 2950.00,
+    "averageVolume": 6000000
+  }
+]
+
