@@ -3,9 +3,12 @@ package com.finsight.portfolio.controller;
 import com.finsight.common.dto.HoldingDTO;
 import com.finsight.common.dto.PortfolioDTO;
 import com.finsight.portfolio.dto.CreatePortfolioRequest;
+import com.finsight.portfolio.dto.PortfolioAllocationResponse;
+import com.finsight.portfolio.dto.PortfolioPerformanceDTO;
 import com.finsight.portfolio.dto.TradeRequest;
 import com.finsight.portfolio.dto.TransactionResponse;
 import com.finsight.portfolio.service.PortfolioService;
+import com.finsight.portfolio.service.PortfolioValuationService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,16 +28,20 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * REST Controller exposing virtual portfolio management and trade execution APIs.
+ * REST Controller exposing virtual portfolio management, trade execution,
+ * real-time valuation performance, and sector allocation metrics.
  */
 @RestController
 @RequestMapping("/api/v1/portfolios")
 public class PortfolioController {
 
     private final PortfolioService portfolioService;
+    private final PortfolioValuationService portfolioValuationService;
 
-    public PortfolioController(PortfolioService portfolioService) {
+    public PortfolioController(PortfolioService portfolioService,
+                               PortfolioValuationService portfolioValuationService) {
         this.portfolioService = portfolioService;
+        this.portfolioValuationService = portfolioValuationService;
     }
 
     /**
@@ -74,6 +81,26 @@ public class PortfolioController {
     }
 
     /**
+     * Real-time portfolio performance breakdown:
+     * total invested, current holdings value, portfolio total, unrealized P&L, daily change.
+     */
+    @GetMapping("/{id}/performance")
+    public ResponseEntity<PortfolioPerformanceDTO> getPerformance(@PathVariable Long id) {
+        PortfolioPerformanceDTO performance = portfolioValuationService.calculatePerformance(id);
+        return ResponseEntity.ok(performance);
+    }
+
+    /**
+     * Asset and sector allocation breakdown:
+     * percentage breakdown by stock and by sector, plus cash weighting.
+     */
+    @GetMapping("/{id}/allocation")
+    public ResponseEntity<PortfolioAllocationResponse> getAllocation(@PathVariable Long id) {
+        PortfolioAllocationResponse allocation = portfolioValuationService.calculateAllocation(id);
+        return ResponseEntity.ok(allocation);
+    }
+
+    /**
      * Get paginated transaction trade history for a portfolio (newest first).
      */
     @GetMapping("/{id}/transactions")
@@ -96,7 +123,6 @@ public class PortfolioController {
             @RequestHeader(value = "Idempotency-Key", required = false) String idempotencyKey,
             @Valid @RequestBody TradeRequest tradeRequest) {
 
-        // If client does not provide an idempotency key, generate a fallback UUID
         String effectiveKey = (idempotencyKey != null && !idempotencyKey.isBlank())
                 ? idempotencyKey.trim()
                 : UUID.randomUUID().toString();

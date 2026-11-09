@@ -164,6 +164,71 @@ class PortfolioControllerIT {
     }
 
     @Test
+    @DisplayName("Performance & Valuation: GET /api/v1/portfolios/{id}/performance should return performance metrics")
+    void shouldReturnPerformanceMetrics() throws Exception {
+        // 1. Create Portfolio
+        CreatePortfolioRequest createReq = new CreatePortfolioRequest("it-user-perf", "Performance Portfolio", "USD", new BigDecimal("100000.0000"));
+        MvcResult createResult = mockMvc.perform(post("/api/v1/portfolios")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createReq)))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Long portfolioId = objectMapper.readTree(createResult.getResponse().getContentAsString()).get("id").asLong();
+
+        // 2. Buy 10 AAPL @ 150.00
+        TradeRequest trade = new TradeRequest("AAPL", TransactionType.BUY, new BigDecimal("10.0000"), new BigDecimal("150.0000"), BigDecimal.ZERO);
+        mockMvc.perform(post("/api/v1/portfolios/{id}/transactions", portfolioId)
+                        .header("Idempotency-Key", "perf-trade-" + UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(trade)))
+                .andExpect(status().isCreated());
+
+        // 3. Query Performance
+        mockMvc.perform(get("/api/v1/portfolios/{id}/performance", portfolioId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.portfolioId", is(portfolioId.intValue())))
+                .andExpect(jsonPath("$.cashBalance", is(98500.0000))) // 100000 - 1500
+                .andExpect(jsonPath("$.totalInvested", is(1500.0000)))
+                .andExpect(jsonPath("$.totalCurrentValue", is(1500.0000)))
+                .andExpect(jsonPath("$.totalPortfolioValue", is(100000.0000)))
+                .andExpect(jsonPath("$.asOf").exists());
+    }
+
+    @Test
+    @DisplayName("Allocation: GET /api/v1/portfolios/{id}/allocation should return stock & sector breakdown")
+    void shouldReturnAllocationMetrics() throws Exception {
+        // 1. Create Portfolio
+        CreatePortfolioRequest createReq = new CreatePortfolioRequest("it-user-alloc", "Allocation Portfolio", "USD", new BigDecimal("10000.0000"));
+        MvcResult createResult = mockMvc.perform(post("/api/v1/portfolios")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(createReq)))
+                .andExpect(status().isCreated())
+                .andReturn();
+        Long portfolioId = objectMapper.readTree(createResult.getResponse().getContentAsString()).get("id").asLong();
+
+        // 2. Buy 10 AAPL @ 150.00 (Technology)
+        TradeRequest trade = new TradeRequest("AAPL", TransactionType.BUY, new BigDecimal("10.0000"), new BigDecimal("150.0000"), BigDecimal.ZERO);
+        mockMvc.perform(post("/api/v1/portfolios/{id}/transactions", portfolioId)
+                        .header("Idempotency-Key", "alloc-trade-" + UUID.randomUUID())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(trade)))
+                .andExpect(status().isCreated());
+
+        // 3. Query Allocation
+        mockMvc.perform(get("/api/v1/portfolios/{id}/allocation", portfolioId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.portfolioId", is(portfolioId.intValue())))
+                .andExpect(jsonPath("$.totalPortfolioValue", is(10000.0000)))
+                .andExpect(jsonPath("$.cashBalance", is(8500.0000)))
+                .andExpect(jsonPath("$.cashWeightPercent", is(85.00)))
+                .andExpect(jsonPath("$.holdingsWeightPercent", is(15.00)))
+                .andExpect(jsonPath("$.sectorAllocations[0].sector", is("Technology")))
+                .andExpect(jsonPath("$.sectorAllocations[0].weightPercent", is(15.00)))
+                .andExpect(jsonPath("$.stockAllocations[0].symbol", is("AAPL")))
+                .andExpect(jsonPath("$.stockAllocations[0].weightPercent", is(15.00)));
+    }
+
+    @Test
     @DisplayName("Error Handling: Querying unknown portfolio returns RFC 7807 ProblemDetail 404")
     void shouldReturnRfc7807NotFound() throws Exception {
         mockMvc.perform(get("/api/v1/portfolios/99999"))
