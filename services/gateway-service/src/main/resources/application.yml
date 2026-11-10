@@ -6,45 +6,65 @@ spring:
     name: gateway-service
   cloud:
     gateway:
+      httpclient:
+        connect-timeout: 5000
+        response-timeout: 10s
+        pool:
+          type: ELASTIC
+          max-idle-time: 15s
       routes:
         - id: portfolio-service-route
           uri: ${PORTFOLIO_SERVICE_URL:http://localhost:8081}
           predicates:
             - Path=/api/v1/portfolios/**
+          metadata:
+            response-timeout: 5000
+            connect-timeout: 3000
+
         - id: market-data-service-route
           uri: ${MARKET_DATA_SERVICE_URL:http://localhost:8082}
           predicates:
             - Path=/api/v1/market/**
-        - id: research-service-route
-          uri: ${RESEARCH_SERVICE_URL:http://localhost:8083}
-          predicates:
-            - Path=/api/v1/research/**
+          metadata:
+            response-timeout: 5000
+            connect-timeout: 3000
+
         - id: alert-service-route
-          uri: ${ALERT_SERVICE_URL:http://localhost:8084}
+          uri: ${ALERT_SERVICE_URL:http://localhost:8083}
           predicates:
             - Path=/api/v1/alerts/**
-      globalcors:
-        cors-configurations:
-          '[/**]':
-            allowedOrigins:
-              - "http://localhost:5173"
-              - "http://localhost:3000"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - PATCH
-              - DELETE
-              - OPTIONS
-            allowedHeaders: "*"
-            allowCredentials: true
+          metadata:
+            response-timeout: 5000
+            connect-timeout: 3000
+
+        - id: research-service-route
+          uri: ${RESEARCH_SERVICE_URL:http://localhost:8084}
+          predicates:
+            - Path=/api/v1/research/**
+          metadata:
+            response-timeout: 30000
+            connect-timeout: 5000
+
+finsight:
+  cors:
+    allowed-origins:
+      - "http://localhost:5173"
+      - "http://localhost:3000"
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
+        include: health,info,metrics,gateway
   endpoint:
     health:
       show-details: always
+    gateway:
+      enabled: true
 
+logging:
+  level:
+    root: INFO
+    com.finsight.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
+    reactor.netty: INFO
